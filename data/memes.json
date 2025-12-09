@@ -1,0 +1,38 @@
+[
+  {
+    "id": "meme-1",
+    "url": "https://i.redd.it/placeholder-crypto-meme-1.jpg",
+    "title": "HODL Forever",
+    "source": "Reddit",
+    "description": "Classic HODL meme about holding crypto through volatility"
+  },
+  {
+    "id": "meme-2",
+    "url": "https://i.redd.it/placeholder-crypto-meme-2.jpg",
+    "title": "To The Moon",
+    "source": "Reddit",
+    "description": "Popular moon meme celebrating crypto gains"
+  },
+  {
+    "id": "meme-3",
+    "url": "https://i.redd.it/placeholder-crypto-meme-3.jpg",
+    "title": "Diamond Hands",
+    "source": "Reddit",
+    "description": "Diamond hands meme symbolizing strong conviction"
+  },
+  {
+    "id": "meme-4",
+    "url": "https://i.redd.it/placeholder-crypto-meme-4.jpg",
+    "title": "Buy The Dip",
+    "source": "Reddit",
+    "description": "Meme about buying during market dips"
+  },
+  {
+    "id": "meme-5",
+    "url": "https://i.redd.it/placeholder-crypto-meme-5.jpg",
+    "title": "When Lambo?",
+    "source": "Reddit",
+    "description": "Classic crypto meme asking when gains will materialize"
+  }
+]
+
