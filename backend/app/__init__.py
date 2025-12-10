@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -13,7 +14,12 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
     
     # Initialize extensions
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # CORS: Allow all origins in development, restrict in production
+    allowed_origins = os.environ.get('CORS_ORIGINS', '*').split(',')
+    if allowed_origins == ['*']:
+        CORS(app, resources={r"/api/*": {"origins": "*"}})
+    else:
+        CORS(app, resources={r"/api/*": {"origins": allowed_origins}})
     mongo.init_app(app)
     jwt.init_app(app)
     

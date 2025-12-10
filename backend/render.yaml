@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: crypto-dashboard-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -w 4 -b 0.0.0.0:$PORT app:app
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: MONGO_URI
+        sync: false
+      - key: COINGECKO_API_KEY
+        sync: false
+      - key: CRYPTOPANIC_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: AI_MODEL
+        value: meta-llama/llama-3.2-3b-instruct:free
+
