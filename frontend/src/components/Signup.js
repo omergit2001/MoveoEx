@@ -29,7 +29,7 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      const response = await authService.register(email, password, name);
+      await authService.register(email, password, name);
       
       // New users always go to onboarding
       navigate('/onboarding');

@@ -6,14 +6,6 @@ import Signup from './components/Signup';
 import Onboarding from './components/Onboarding';
 import Dashboard from './components/Dashboard';
 
-// Protected Route Component
-const ProtectedRoute = ({ children }) => {
-  if (!authService.isAuthenticated()) {
-    return <Navigate to="/login" replace />;
-  }
-  return children;
-};
-
 // Onboarding Route - redirect to dashboard if already has preferences
 const OnboardingRoute = ({ children }) => {
   if (!authService.isAuthenticated()) {

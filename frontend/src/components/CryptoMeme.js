@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaLaugh } from 'react-icons/fa';
 import FeedbackButtons from './FeedbackButtons';
 
 const CryptoMeme = ({ meme }) => {
-  const [imageError, setImageError] = useState(false);
-  
   if (!meme || !meme.url) {
     return (
       <div className="dashboard-card">
@@ -23,7 +21,6 @@ const CryptoMeme = ({ meme }) => {
   };
 
   const handleImageError = (e) => {
-    setImageError(true);
     // Try to use SVG placeholder as fallback
     e.target.src = generatePlaceholder(meme.title);
     e.target.onerror = null; // Prevent infinite loop
