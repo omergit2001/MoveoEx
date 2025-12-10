@@ -1,37 +1,37 @@
 [
   {
     "id": "meme-1",
-    "url": "https://i.redd.it/placeholder-crypto-meme-1.jpg",
+    "url": "https://via.placeholder.com/600x400/667eea/ffffff?text=HODL+Forever",
     "title": "HODL Forever",
-    "source": "Reddit",
+    "source": "Static",
     "description": "Classic HODL meme about holding crypto through volatility"
   },
   {
     "id": "meme-2",
-    "url": "https://i.redd.it/placeholder-crypto-meme-2.jpg",
+    "url": "https://via.placeholder.com/600x400/764ba2/ffffff?text=To+The+Moon",
     "title": "To The Moon",
-    "source": "Reddit",
+    "source": "Static",
     "description": "Popular moon meme celebrating crypto gains"
   },
   {
     "id": "meme-3",
-    "url": "https://i.redd.it/placeholder-crypto-meme-3.jpg",
+    "url": "https://via.placeholder.com/600x400/27ae60/ffffff?text=Diamond+Hands",
     "title": "Diamond Hands",
-    "source": "Reddit",
+    "source": "Static",
     "description": "Diamond hands meme symbolizing strong conviction"
   },
   {
     "id": "meme-4",
-    "url": "https://i.redd.it/placeholder-crypto-meme-4.jpg",
+    "url": "https://via.placeholder.com/600x400/e74c3c/ffffff?text=Buy+The+Dip",
     "title": "Buy The Dip",
-    "source": "Reddit",
+    "source": "Static",
     "description": "Meme about buying during market dips"
   },
   {
     "id": "meme-5",
-    "url": "https://i.redd.it/placeholder-crypto-meme-5.jpg",
+    "url": "https://via.placeholder.com/600x400/f39c12/ffffff?text=When+Lambo%3F",
     "title": "When Lambo?",
-    "source": "Reddit",
+    "source": "Static",
     "description": "Classic crypto meme asking when gains will materialize"
   }
 ]

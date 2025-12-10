@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../services/auth';
 
@@ -7,10 +7,19 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const errorRef = useRef('');
   const navigate = useNavigate();
+
+  // Keep error state in sync with ref - restore if it gets cleared accidentally
+  useEffect(() => {
+    if (errorRef.current && !error) {
+      setError(errorRef.current);
+    }
+  }, [error]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    errorRef.current = '';
     setError('');
     setLoading(true);
 
@@ -24,7 +33,12 @@ const Login = () => {
         navigate('/dashboard');
       }
     } catch (err) {
-      setError(err.error || 'Login failed. Please check your credentials.');
+      const errorMessage = err.error || 'Login failed. Please check your credentials.';
+      errorRef.current = errorMessage;
+      setError(errorMessage);
+      // Clear fields on error but keep error message displayed
+      setEmail('');
+      setPassword('');
     } finally {
       setLoading(false);
     }
@@ -35,7 +49,11 @@ const Login = () => {
       <div className="auth-card">
         <h1>Login</h1>
         <form onSubmit={handleSubmit} className="auth-form">
-          {error && <div className="error-message">{error}</div>}
+          {(error || errorRef.current) && (
+            <div key="error-message" className="error-message">
+              {error || errorRef.current}
+            </div>
+          )}
           
           <div className="form-group">
             <label htmlFor="email">Email</label>
@@ -43,7 +61,13 @@ const Login = () => {
               type="email"
               id="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                // Restore error if it exists and user is typing
+                if (errorRef.current && !error) {
+                  setError(errorRef.current);
+                }
+              }}
               required
               placeholder="Enter your email"
             />
@@ -55,7 +79,13 @@ const Login = () => {
               type="password"
               id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                // Restore error if it exists and user is typing
+                if (errorRef.current && !error) {
+                  setError(errorRef.current);
+                }
+              }}
               required
               placeholder="Enter your password"
             />

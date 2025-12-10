@@ -70,11 +70,11 @@ def login():
         # Find user
         user = mongo.db.users.find_one({'email': email})
         if not user:
-            return jsonify({'error': 'Invalid email or password'}), 401
+            return jsonify({'error': 'The username or password is incorrect.'}), 401
         
         # Verify password
         if not verify_password(password, user['password_hash']):
-            return jsonify({'error': 'Invalid email or password'}), 401
+            return jsonify({'error': 'The username or password is incorrect.'}), 401
         
         # Generate JWT token
         user_id = str(user['_id'])

@@ -37,8 +37,8 @@ def get_dashboard():
             'meme': {}
         }
         
-        # 1. Market News (if user wants Market News)
-        if 'Market News' in content_types or not content_types:
+        # 1. Market News - Always fetch
+        try:
             news_items = get_crypto_news(limit=5)
             for item in news_items:
                 item['content_hash'] = generate_content_hash({
@@ -47,19 +47,26 @@ def get_dashboard():
                     'title': item.get('title')
                 })
             dashboard_data['news'] = news_items
+        except Exception as e:
+            print(f"Error fetching news: {e}")
+            dashboard_data['news'] = []
         
-        # 2. Coin Prices
-        prices = get_coin_prices(interested_assets=interested_assets, limit=10)
-        for coin in prices:
-            coin['content_hash'] = generate_content_hash({
-                'type': 'price',
-                'id': coin.get('id'),
-                'name': coin.get('name')
-            })
-        dashboard_data['prices'] = prices
+        # 2. Coin Prices - Always fetch
+        try:
+            prices = get_coin_prices(interested_assets=interested_assets, limit=10)
+            for coin in prices:
+                coin['content_hash'] = generate_content_hash({
+                    'type': 'price',
+                    'id': coin.get('id'),
+                    'name': coin.get('name')
+                })
+            dashboard_data['prices'] = prices
+        except Exception as e:
+            print(f"Error fetching prices: {e}")
+            dashboard_data['prices'] = []
         
-        # 3. AI Insight (if user wants Market News or Charts)
-        if 'Market News' in content_types or 'Charts' in content_types or not content_types:
+        # 3. AI Insight - Always fetch
+        try:
             insight = generate_ai_insight(preferences)
             insight['content_hash'] = generate_content_hash({
                 'type': 'insight',
@@ -67,9 +74,12 @@ def get_dashboard():
                 'date': str(user.get('updated_at', ''))
             })
             dashboard_data['ai_insight'] = insight
+        except Exception as e:
+            print(f"Error generating AI insight: {e}")
+            dashboard_data['ai_insight'] = {}
         
-        # 4. Fun Meme (if user wants Fun content)
-        if 'Fun' in content_types or not content_types:
+        # 4. Fun Meme - Always fetch
+        try:
             meme = get_random_meme()
             meme['content_hash'] = generate_content_hash({
                 'type': 'meme',
@@ -77,6 +87,9 @@ def get_dashboard():
                 'url': meme.get('url')
             })
             dashboard_data['meme'] = meme
+        except Exception as e:
+            print(f"Error fetching meme: {e}")
+            dashboard_data['meme'] = {}
         
         return jsonify({
             'dashboard': dashboard_data,

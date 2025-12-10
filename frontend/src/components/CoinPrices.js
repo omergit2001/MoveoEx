@@ -39,8 +39,14 @@ const CoinPrices = ({ prices }) => {
                 {coin.name}
                 {coin.symbol && <span className="coin-symbol">({coin.symbol})</span>}
               </span>
+              {coin.content_hash && (
+                <FeedbackButtons
+                  contentType="price"
+                  contentHash={coin.content_hash}
+                />
+              )}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
               <span className="coin-price">{formatPrice(coin.price_usd)}</span>
               {coin.price_change_24h !== undefined && (
                 <span className={`coin-change ${coin.price_change_24h >= 0 ? 'positive' : 'negative'}`}>
@@ -48,12 +54,6 @@ const CoinPrices = ({ prices }) => {
                 </span>
               )}
             </div>
-            {coin.content_hash && (
-              <FeedbackButtons
-                contentType="price"
-                contentHash={coin.content_hash}
-              />
-            )}
           </div>
         ))}
       </div>

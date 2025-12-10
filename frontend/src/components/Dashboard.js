@@ -108,32 +108,12 @@ const Dashboard = () => {
       )}
 
       <div className="dashboard-grid">
-        {dashboardData?.news && dashboardData.news.length > 0 && (
-          <MarketNews news={dashboardData.news} />
-        )}
-        
-        {dashboardData?.prices && dashboardData.prices.length > 0 && (
-          <CoinPrices prices={dashboardData.prices} />
-        )}
-        
-        {dashboardData?.ai_insight && dashboardData.ai_insight.text && (
-          <AIInsight insight={dashboardData.ai_insight} />
-        )}
-        
-        {dashboardData?.meme && dashboardData.meme.url && (
-          <CryptoMeme meme={dashboardData.meme} />
-        )}
+        {/* Always display all 4 sections */}
+        <MarketNews news={dashboardData?.news || []} />
+        <CoinPrices prices={dashboardData?.prices || []} />
+        <AIInsight insight={dashboardData?.ai_insight || {}} />
+        <CryptoMeme meme={dashboardData?.meme || {}} />
       </div>
-
-      {(!dashboardData || 
-        (!dashboardData.news?.length && 
-         !dashboardData.prices?.length && 
-         !dashboardData.ai_insight?.text && 
-         !dashboardData.meme?.url)) && (
-        <div className="dashboard-card">
-          <p>No content available. Please check your preferences or try refreshing.</p>
-        </div>
-      )}
     </div>
   );
 };
