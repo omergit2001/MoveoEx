@@ -24,11 +24,13 @@ def create_app(config_class=Config):
     jwt.init_app(app)
     
     # Register blueprints
+    from app.routes.health import health_bp
     from app.routes.auth import auth_bp
     from app.routes.dashboard import dashboard_bp
     from app.routes.preferences import preferences_bp
     from app.routes.feedback import feedback_bp
     
+    app.register_blueprint(health_bp, url_prefix='/api')
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(dashboard_bp, url_prefix='/api')
     app.register_blueprint(preferences_bp, url_prefix='/api/user')
