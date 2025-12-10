@@ -103,11 +103,39 @@ def get_coin_prices(interested_assets=None, limit=10):
                     'image': coin.get('image', '')
                 })
             return coins
+        else:
+            current_app.logger.error(f"CoinGecko API error: Status {response.status_code} - {response.text[:200]}")
+            # Return fallback coins if API fails
+            return get_fallback_coins()
         
-        # If API fails, return empty list
-        return []
-        
+    except requests.exceptions.Timeout:
+        current_app.logger.error("CoinGecko API timeout")
+        return get_fallback_coins()
+    except requests.exceptions.RequestException as e:
+        current_app.logger.error(f"CoinGecko API request error: {str(e)}")
+        return get_fallback_coins()
     except Exception as e:
-        current_app.logger.error(f"CoinGecko API error: {str(e)}")
-        return []
+        current_app.logger.error(f"CoinGecko API error: {str(e)}", exc_info=True)
+        return get_fallback_coins()
+
+def get_fallback_coins():
+    """Return fallback coin prices if API fails"""
+    return [
+        {
+            'id': 'bitcoin',
+            'name': 'Bitcoin',
+            'symbol': 'BTC',
+            'price_usd': 0,
+            'price_change_24h': 0,
+            'market_cap': 0
+        },
+        {
+            'id': 'ethereum',
+            'name': 'Ethereum',
+            'symbol': 'ETH',
+            'price_usd': 0,
+            'price_change_24h': 0,
+            'market_cap': 0
+        }
+    ]
 
