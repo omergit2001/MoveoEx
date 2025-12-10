@@ -9,11 +9,16 @@ export const authService = {
    */
   register: async (email, password, name) => {
     try {
+      console.log('Attempting registration with email:', email);
+      console.log('API URL:', process.env.REACT_APP_API_URL || 'http://localhost:5000/api');
+      
       const response = await api.post('/auth/register', {
         email,
         password,
         name,
       });
+      
+      console.log('Registration response:', response.data);
       
       if (response.data.access_token) {
         localStorage.setItem('access_token', response.data.access_token);
@@ -22,6 +27,10 @@ export const authService = {
       
       return response.data;
     } catch (error) {
+      console.error('Registration error:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      console.error('Full error:', error);
       throw error.response?.data || { error: 'Registration failed' };
     }
   },
