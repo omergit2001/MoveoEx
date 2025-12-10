@@ -13,6 +13,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
+  const [userPreferences, setUserPreferences] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,6 +38,7 @@ const Dashboard = () => {
     try {
       const response = await api.get('/dashboard');
       setDashboardData(response.data.dashboard);
+      setUserPreferences(response.data.user_preferences);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to load dashboard. Please try again.');
     } finally {
@@ -108,11 +110,19 @@ const Dashboard = () => {
       )}
 
       <div className="dashboard-grid">
-        {/* Always display all 4 sections */}
-        <MarketNews news={dashboardData?.news || []} />
-        <CoinPrices prices={dashboardData?.prices || []} />
-        <AIInsight insight={dashboardData?.ai_insight || {}} />
-        <CryptoMeme meme={dashboardData?.meme || {}} />
+        {/* Display sections based on user's content type preferences */}
+        {userPreferences?.content_types?.includes('Market News') && (
+          <MarketNews news={dashboardData?.news || []} />
+        )}
+        {userPreferences?.content_types?.includes('Charts') && (
+          <CoinPrices prices={dashboardData?.prices || []} />
+        )}
+        {userPreferences?.content_types?.includes('Social') && (
+          <AIInsight insight={dashboardData?.ai_insight || {}} />
+        )}
+        {userPreferences?.content_types?.includes('Fun') && (
+          <CryptoMeme meme={dashboardData?.meme || {}} />
+        )}
       </div>
     </div>
   );

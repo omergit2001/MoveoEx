@@ -29,7 +29,7 @@ def get_dashboard():
         interested_assets = preferences.get('interested_assets', []) if preferences else []
         content_types = preferences.get('content_types', ['Market News']) if preferences else ['Market News']
         
-        # Fetch data from all services
+        # Fetch data only for selected content types
         dashboard_data = {
             'news': [],
             'prices': [],
@@ -37,21 +37,23 @@ def get_dashboard():
             'meme': {}
         }
         
-        # 1. Market News - Always fetch
-        try:
-            news_items = get_crypto_news(limit=5)
-            for item in news_items:
-                item['content_hash'] = generate_content_hash({
-                    'type': 'news',
-                    'id': item.get('id'),
-                    'title': item.get('title')
-                })
-            dashboard_data['news'] = news_items
-        except Exception as e:
-            print(f"Error fetching news: {e}")
-            dashboard_data['news'] = []
+        # 1. Market News - Only if "Market News" is selected
+        if 'Market News' in content_types:
+            try:
+                news_items = get_crypto_news(limit=5)
+                for item in news_items:
+                    item['content_hash'] = generate_content_hash({
+                        'type': 'news',
+                        'id': item.get('id'),
+                        'title': item.get('title')
+                    })
+                dashboard_data['news'] = news_items
+            except Exception as e:
+                current_app.logger.error(f"Error fetching news: {e}")
+                dashboard_data['news'] = []
         
-        # 2. Coin Prices - Always fetch
+        # 2. Coin Prices (Charts) - Only if "Charts" is selected
+        if 'Charts' in content_types:
         try:
             prices = get_coin_prices(interested_assets=interested_assets, limit=10)
             current_app.logger.info(f"Coin prices fetched: {len(prices) if prices else 0} coins")
@@ -88,31 +90,33 @@ def get_dashboard():
             except:
                 dashboard_data['prices'] = []
         
-        # 3. AI Insight - Always fetch
-        try:
-            insight = generate_ai_insight(preferences)
-            insight['content_hash'] = generate_content_hash({
-                'type': 'insight',
-                'text': insight.get('text', ''),
-                'date': str(user.get('updated_at', ''))
-            })
-            dashboard_data['ai_insight'] = insight
-        except Exception as e:
-            print(f"Error generating AI insight: {e}")
-            dashboard_data['ai_insight'] = {}
+        # 3. AI Insight (Social) - Only if "Social" is selected
+        if 'Social' in content_types:
+            try:
+                insight = generate_ai_insight(preferences)
+                insight['content_hash'] = generate_content_hash({
+                    'type': 'insight',
+                    'text': insight.get('text', ''),
+                    'date': str(user.get('updated_at', ''))
+                })
+                dashboard_data['ai_insight'] = insight
+            except Exception as e:
+                current_app.logger.error(f"Error generating AI insight: {e}")
+                dashboard_data['ai_insight'] = {}
         
-        # 4. Fun Meme - Always fetch
-        try:
-            meme = get_random_meme()
-            meme['content_hash'] = generate_content_hash({
-                'type': 'meme',
-                'id': meme.get('id'),
-                'url': meme.get('url')
-            })
-            dashboard_data['meme'] = meme
-        except Exception as e:
-            print(f"Error fetching meme: {e}")
-            dashboard_data['meme'] = {}
+        # 4. Fun Meme - Only if "Fun" is selected
+        if 'Fun' in content_types:
+            try:
+                meme = get_random_meme()
+                meme['content_hash'] = generate_content_hash({
+                    'type': 'meme',
+                    'id': meme.get('id'),
+                    'url': meme.get('url')
+                })
+                dashboard_data['meme'] = meme
+            except Exception as e:
+                current_app.logger.error(f"Error fetching meme: {e}")
+                dashboard_data['meme'] = {}
         
         return jsonify({
             'dashboard': dashboard_data,
