@@ -1,19 +1,11 @@
 """
-Production entry point for Gunicorn
+WSGI entry point for Gunicorn (alternative)
 """
 import os
-import sys
-
-# Add the current directory to Python path
-sys.path.insert(0, os.path.dirname(__file__))
-
 from app import create_app
 from app.config import Config, ProductionConfig
 
 # Use ProductionConfig if available, otherwise fall back to Config
 config_class = ProductionConfig if os.environ.get('FLASK_ENV') == 'production' else Config
 app = create_app(config_class)
-
-if __name__ == '__main__':
-    app.run()
 
