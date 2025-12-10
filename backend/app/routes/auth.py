@@ -1,7 +1,7 @@
 """
 Authentication routes: Register, Login, Get Current User
 """
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from bson import ObjectId
 from app import mongo
@@ -68,17 +68,32 @@ def login():
         password = data['password']
         
         # Find user
-        user = mongo.db.users.find_one({'email': email})
+        try:
+            user = mongo.db.users.find_one({'email': email})
+        except Exception as db_error:
+            current_app.logger.error(f"Database error during login: {str(db_error)}")
+            return jsonify({'error': 'Database connection error. Please try again.'}), 500
+        
         if not user:
+            current_app.logger.warning(f"Login attempt with non-existent email: {email}")
             return jsonify({'error': 'The username or password is incorrect.'}), 401
         
         # Verify password
-        if not verify_password(password, user['password_hash']):
+        try:
+            password_valid = verify_password(password, user['password_hash'])
+        except Exception as pwd_error:
+            current_app.logger.error(f"Password verification error: {str(pwd_error)}")
+            return jsonify({'error': 'The username or password is incorrect.'}), 401
+        
+        if not password_valid:
+            current_app.logger.warning(f"Invalid password attempt for email: {email}")
             return jsonify({'error': 'The username or password is incorrect.'}), 401
         
         # Generate JWT token
         user_id = str(user['_id'])
         access_token = create_access_token(identity=user_id)
+        
+        current_app.logger.info(f"Successful login for user: {email}")
         
         return jsonify({
             'message': 'Login successful',
@@ -92,6 +107,7 @@ def login():
         }), 200
         
     except Exception as e:
+        current_app.logger.error(f"Login error: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 @auth_bp.route('/me', methods=['GET'])
