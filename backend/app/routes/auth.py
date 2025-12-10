@@ -25,20 +25,40 @@ def register():
         name = data['name'].strip()
         
         # Check if user already exists
-        existing_user = mongo.db.users.find_one({'email': email})
+        try:
+            existing_user = mongo.db.users.find_one({'email': email})
+        except Exception as db_error:
+            current_app.logger.error(f"Database error during registration check: {str(db_error)}")
+            return jsonify({'error': 'Database connection error. Please try again.'}), 500
+        
         if existing_user:
             return jsonify({'error': 'User with this email already exists'}), 400
         
         # Hash password and create user
-        password_hash = hash_password(password)
+        try:
+            password_hash = hash_password(password)
+        except Exception as hash_error:
+            current_app.logger.error(f"Password hashing error: {str(hash_error)}")
+            return jsonify({'error': 'Registration failed. Please try again.'}), 500
+        
         user_doc = User.create_user(email, password_hash, name)
         
         # Insert user into database
-        result = mongo.db.users.insert_one(user_doc)
-        user_id = str(result.inserted_id)
+        try:
+            result = mongo.db.users.insert_one(user_doc)
+            user_id = str(result.inserted_id)
+        except Exception as insert_error:
+            current_app.logger.error(f"Database insert error: {str(insert_error)}")
+            return jsonify({'error': 'Failed to create user. Please try again.'}), 500
         
         # Generate JWT token
-        access_token = create_access_token(identity=user_id)
+        try:
+            access_token = create_access_token(identity=user_id)
+        except Exception as jwt_error:
+            current_app.logger.error(f"JWT token generation error: {str(jwt_error)}")
+            return jsonify({'error': 'Registration failed. Please try again.'}), 500
+        
+        current_app.logger.info(f"Successful registration for user: {email}")
         
         return jsonify({
             'message': 'User registered successfully',
@@ -52,6 +72,7 @@ def register():
         }), 201
         
     except Exception as e:
+        current_app.logger.error(f"Registration error: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 @auth_bp.route('/login', methods=['POST'])
