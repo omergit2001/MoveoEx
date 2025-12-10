@@ -54,41 +54,41 @@ def get_dashboard():
         
         # 2. Coin Prices (Charts) - Only if "Charts" is selected
         if 'Charts' in content_types:
-        try:
-            prices = get_coin_prices(interested_assets=interested_assets, limit=10)
-            current_app.logger.info(f"Coin prices fetched: {len(prices) if prices else 0} coins")
-            
-            # Ensure we always have prices (fallback should provide at least some)
-            if not prices or len(prices) == 0:
-                current_app.logger.warning("Coin prices returned empty list, using fallback")
-                from app.services.coingecko import get_fallback_coins
-                prices = get_fallback_coins()
-            
-            # Add content hash to each coin
-            for coin in prices:
-                coin['content_hash'] = generate_content_hash({
-                    'type': 'price',
-                    'id': coin.get('id'),
-                    'name': coin.get('name')
-                })
-            
-            dashboard_data['prices'] = prices
-            current_app.logger.info(f"Final prices count: {len(dashboard_data['prices'])}")
-        except Exception as e:
-            current_app.logger.error(f"Error fetching prices: {e}", exc_info=True)
-            # Use fallback coins even on exception
             try:
-                from app.services.coingecko import get_fallback_coins
-                fallback_prices = get_fallback_coins()
-                for coin in fallback_prices:
+                prices = get_coin_prices(interested_assets=interested_assets, limit=10)
+                current_app.logger.info(f"Coin prices fetched: {len(prices) if prices else 0} coins")
+                
+                # Ensure we always have prices (fallback should provide at least some)
+                if not prices or len(prices) == 0:
+                    current_app.logger.warning("Coin prices returned empty list, using fallback")
+                    from app.services.coingecko import get_fallback_coins
+                    prices = get_fallback_coins()
+                
+                # Add content hash to each coin
+                for coin in prices:
                     coin['content_hash'] = generate_content_hash({
                         'type': 'price',
                         'id': coin.get('id'),
                         'name': coin.get('name')
                     })
-                dashboard_data['prices'] = fallback_prices
-            except:
-                dashboard_data['prices'] = []
+                
+                dashboard_data['prices'] = prices
+                current_app.logger.info(f"Final prices count: {len(dashboard_data['prices'])}")
+            except Exception as e:
+                current_app.logger.error(f"Error fetching prices: {e}", exc_info=True)
+                # Use fallback coins even on exception
+                try:
+                    from app.services.coingecko import get_fallback_coins
+                    fallback_prices = get_fallback_coins()
+                    for coin in fallback_prices:
+                        coin['content_hash'] = generate_content_hash({
+                            'type': 'price',
+                            'id': coin.get('id'),
+                            'name': coin.get('name')
+                        })
+                    dashboard_data['prices'] = fallback_prices
+                except:
+                    dashboard_data['prices'] = []
         
         # 3. AI Insight (Social) - Only if "Social" is selected
         if 'Social' in content_types:
